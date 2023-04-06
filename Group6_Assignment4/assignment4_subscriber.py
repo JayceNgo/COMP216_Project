@@ -1,24 +1,27 @@
-import json
 import paho.mqtt.client as mqtt
-from group_6_util import group_6_util
+import json
+from assignment4_util import print_data
 
-class subscriber:
-    def __init__(self, topic='Mall Traffic per Hour'):
-        self.client = mqtt.Client()
-        self.client.on_message = subscriber.message_handler
-        self.client.connect('localhost', 1883)
-        self.client.subscribe(topic)
-        self.group_6_util = group_6_util()
-        print(f'Subscriber listening to : {topic}\n...')
-    
-    @staticmethod
-    def message_handler(client, userdat, message):       #handler for on_message
-        decoded_message = message.payload.decode('utf-8')
-        message_dict = json.loads(decoded_message)
-        group_6_util.print_data(message_dict)
+# callback function to print received messages
+def on_message(client, userdata, message):
+    decoded_message = message.payload.decode('utf-8')
+    data_dict = json.loads(decoded_message)
+    print_data(data_dict)
 
-    def block(self):
-        self.client.loop_forever()
+# create client instance
+client = mqtt.Client()
 
-sub = subscriber()
-sub.block()
+# set callback function
+client.on_message = on_message
+
+# connect to broker
+client.connect('localhost', 1883)
+
+# subscribe to topic
+client.subscribe('health/monitoring')
+
+# print message
+print('Subscriber is running...')
+
+# start client loop to receive messages
+client.loop_forever()
