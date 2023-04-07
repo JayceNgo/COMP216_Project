@@ -1,27 +1,27 @@
 import paho.mqtt.client as mqtt
-import json
-import time
-from assignment4_util import create_data
+from time import sleep
+from group_6_util import group_6_util
+from json import dumps
 
-BROKER_ADDRESS = "localhost"
-BROKER_PORT = 1883
-TOPIC = "health/monitoring"
-QOS = 0
+class publisher:
+    def __init__(self, delay =0.75, topic='Mall Traffic per Hour'):
+        self.gen = group_6_util()
+        self.client = mqtt.Client()
+        self.topic = topic
+        self.delay = delay
 
-client = mqtt.Client()
+    def publish(self, times=1):
+        for x in range(times):
+            print(f'#{x}', end=' ' )
+            self.__publish()
 
-client.connect(BROKER_ADDRESS, BROKER_PORT)
+    def __publish(self):
+        data = dumps(self.gen.create_data())
+        print(f'{data} to broker')
+        self.client.connect('localhost', 1883)
+        self.client.publish(self.topic, payload=data)
+        sleep(self.delay)                           #necessary 
+        self.client.disconnect()
 
-try:
-    while True:
-        payload = create_data()
-        payload["id"] += 1  # Increment id
-        message = json.dumps(payload)
-        client.publish(TOPIC, message, qos=QOS)
-        print("Published message:", message)
-        time.sleep(1)
-
-except KeyboardInterrupt:
-    print("Stopping publisher...")
-finally:
-    client.disconnect()
+pub = publisher()
+pub.publish(1)
