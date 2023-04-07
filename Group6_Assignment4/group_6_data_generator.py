@@ -18,10 +18,6 @@ class MallTrafficGenerator:
         value = max(0, min(value, 1))
         return value
 
-        """# less realistic way of generating data
-        normalized_value = random.random()
-        return normalized_value * self.intensity"""
-
     # public property that generates values using private normalized value
     def generate_value(self, min_customers=0, max_customers=100):
         # Generate a normalized value and transform it to the desired range
@@ -30,22 +26,20 @@ class MallTrafficGenerator:
         value = min_customers + math.floor(normalized_value * value_range)
         return value
 
-        # method that plots the graph
-
+    # method that plots the graph
     def plot_traffic(self, num_points=12, min_customers=0, max_customers=100):
         # Generate the data
-        return [self.generate_value(min_customers=min_customers, max_customers=max_customers) for i in
-                range(num_points)]
-        print(f'{data} to broker')
+        data = [self.generate_value(min_customers=min_customers, max_customers=max_customers) for i in range(num_points)]
+        
         # Plot the data
-        # plt.plot(data)
-        # plt.xlabel('Time')
-        # plt.ylabel('Customers')
-        # plt.title('Mall Traffic')
+        plt.plot(data)
+        plt.xlabel('Time')
+        plt.ylabel('Customers')
+        plt.title('Mall Traffic')
 
-        # plt.gcf().autofmt_xdate()
-        # # Show the plot
-        # plt.show()
+        plt.gcf().autofmt_xdate()
+        # Show the plot
+        plt.show()
         
         return dumps(data, indent=2)
 
